@@ -6,9 +6,9 @@ package registrar;
 public interface IEventRegistrar {
     void registerEvent();
 
-    long getLastMinuteEventsCount();
+    int getLastMinuteEventsCount();
 
-    long getLastHourEventsCount();
+    int getLastHourEventsCount();
 
-    long getLastDayEventsCount();
+    int getLastDayEventsCount();
 }

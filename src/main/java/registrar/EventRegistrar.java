@@ -33,17 +33,17 @@ public class EventRegistrar implements IEventRegistrar {
     }
 
     @Override
-    public long getLastMinuteEventsCount() {
+    public int getLastMinuteEventsCount() {
         return getEventsCount(ChronoUnit.MINUTES);
     }
 
     @Override
-    public long getLastHourEventsCount() {
+    public int getLastHourEventsCount() {
         return getEventsCount(ChronoUnit.HOURS);
     }
 
     @Override
-    public long getLastDayEventsCount() {
+    public int getLastDayEventsCount() {
         return getEventsCount(ChronoUnit.DAYS);
     }
 
