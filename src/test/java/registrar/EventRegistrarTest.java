@@ -33,7 +33,7 @@ class EventRegistrarTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 15})
     void getLastMinuteEventsCount_correctResultReturns(int actualEventsCount) {
-        LocalDateTime time = LocalDateTime.now().minusMinutes(20);
+        LocalDateTime time = LocalDateTime.now().minusMinutes(4).minusSeconds(1);
         registrar.registerEvent(time);
         registrar.registerEvent(time.plusMinutes(1));
         registrar.registerEvent(time.plusMinutes(2));
@@ -46,12 +46,40 @@ class EventRegistrarTest {
         assertEquals(actualEventsCount + 3, registrar.getLastDayEventsCount());
     }
 
-    @Test
-    void getLastHourEventsCount() {
+    @DisplayName("Check last hour events")
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2, 3, 15})
+    void getLastHourEventsCountt_correctResultReturns(int actualEventsCount) {
+        LocalDateTime time = LocalDateTime.now().minusHours(3).minusMinutes(1);
+        registrar.registerEvent(time);
+        registrar.registerEvent(time.plusHours(1));
+        registrar.registerEvent(time.plusHours(2));
+        registrar.registerEvent(LocalDateTime.now().minusMinutes(30));
+
+        for (int i = 0; i < actualEventsCount; i++)
+            registrar.registerEvent();
+
+        assertEquals(actualEventsCount, registrar.getLastMinuteEventsCount());
+        assertEquals(actualEventsCount + 1, registrar.getLastHourEventsCount());
+        assertEquals(actualEventsCount + 4, registrar.getLastDayEventsCount());
     }
 
-    @Test
-    void getLastDayEventsCount() {
+    @DisplayName("Check last day events")
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2, 3, 15})
+    void getLastDayEventsCountt_correctResultReturns(int actualEventsCount) {
+        LocalDateTime time = LocalDateTime.now().minusDays(3).minusMinutes(1);
+        registrar.registerEvent(time);
+        registrar.registerEvent(time.plusDays(1));
+        registrar.registerEvent(time.plusDays(2));
+        registrar.registerEvent(LocalDateTime.now().minusHours(12));
+
+        for (int i = 0; i < actualEventsCount; i++)
+            registrar.registerEvent();
+
+        assertEquals(actualEventsCount, registrar.getLastMinuteEventsCount());
+        assertEquals(actualEventsCount, registrar.getLastHourEventsCount());
+        assertEquals(actualEventsCount + 1, registrar.getLastDayEventsCount());
     }
 
     @BeforeEach

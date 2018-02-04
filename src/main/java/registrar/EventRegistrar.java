@@ -42,9 +42,8 @@ public class EventRegistrar implements IEventRegistrar {
     private int findApproximateEventsCount(TemporalUnit unit) {
         int size = events.size();
         int val = Collections.binarySearch(events, LocalDateTime.now().minus(1, unit));
-        if (val > 0)
-            return size - val;
-        else
-            return size + val + 1;
+        return val > 0 ?
+                size - val :
+                size + val + 1;
     }
 }
