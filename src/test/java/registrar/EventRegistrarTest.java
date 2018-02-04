@@ -91,6 +91,10 @@ class EventRegistrarTest {
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 15, 10000})
     void registerManyEvents_allEventsRegistred(int actualEventsCount) throws Exception {
+        LocalDateTime oldData = LocalDateTime.now().minusDays(2);
+        for (int i = 0; i < 1_000_000; i++)
+            registrar.registerEvent(oldData);
+
         ExecutorService threadPool = Executors.newFixedThreadPool(20);
         List<Future<Void>> futures = new ArrayList<>();
         for (int i = 0; i < actualEventsCount; i++) {
