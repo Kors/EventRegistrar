@@ -6,6 +6,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -48,7 +54,7 @@ class EventRegistrarTest {
     @DisplayName("Check last hour events")
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 15})
-    void getLastHourEventsCountt_correctResultReturns(int actualEventsCount) {
+    void getLastHourEventsCount_correctResultReturns(int actualEventsCount) {
         LocalDateTime time = LocalDateTime.now().minusHours(3).minusMinutes(1);
         registrar.registerEvent(time);
         registrar.registerEvent(time.plusHours(1));
@@ -66,7 +72,7 @@ class EventRegistrarTest {
     @DisplayName("Check last day events")
     @ParameterizedTest
     @ValueSource(ints = {0, 1, 2, 3, 15})
-    void getLastDayEventsCountt_correctResultReturns(int actualEventsCount) {
+    void getLastDayEventsCount_correctResultReturns(int actualEventsCount) {
         LocalDateTime time = LocalDateTime.now().minusDays(3).minusMinutes(1);
         registrar.registerEvent(time);
         registrar.registerEvent(time.plusDays(1));
@@ -81,8 +87,33 @@ class EventRegistrarTest {
         assertEquals(actualEventsCount + 1, registrar.getLastDayEventsCount());
     }
 
+    @DisplayName("Multithreading test")
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2, 3, 15, 10000})
+    void registerManyEvents_allEventsRegistred(int actualEventsCount) throws Exception {
+        ExecutorService threadPool = Executors.newFixedThreadPool(20);
+        List<Future<Void>> futures = new ArrayList<>();
+        for (int i = 0; i < actualEventsCount; i++) {
+            futures.add(CompletableFuture.runAsync(
+                    () -> registrar.registerEvent(),
+                    threadPool
+            ));
+            futures.add(CompletableFuture.runAsync(
+                    () -> registrar.getLastMinuteEventsCount(),
+                    threadPool
+            ));
+        }
+        for (Future<Void> future : futures) {
+            future.get();
+        }
+
+        assertEquals(actualEventsCount, registrar.getLastMinuteEventsCount());
+        assertEquals(actualEventsCount, registrar.getLastHourEventsCount());
+        assertEquals(actualEventsCount, registrar.getLastDayEventsCount());
+    }
+
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         registrar = new EventRegistrar();
     }
 }
