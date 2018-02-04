@@ -17,8 +17,11 @@ public class EventRegistrar implements IEventRegistrar {
     public void registerEvent() {
         // так как минимально мы считаем за минуту и доли секунд не являются существенными,
         // будем считать такую запись в список упорядоченной, хотя в реальности могут быть небольшие отклонения.
-        events.add(LocalDateTime.now());
-//        Collections.sort(events);
+        registerEvent(LocalDateTime.now());
+    }
+
+    void registerEvent(LocalDateTime time) {
+        events.add(time);
     }
 
     @Override
@@ -42,6 +45,6 @@ public class EventRegistrar implements IEventRegistrar {
         if (val > 0)
             return size - val;
         else
-            return size;
+            return size + val + 1;
     }
 }
