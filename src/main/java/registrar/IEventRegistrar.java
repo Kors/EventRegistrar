@@ -1,6 +1,8 @@
 package registrar;
 
 /**
+ * Interface that provides simple identical events registration.
+ *
  * @author Kors
  */
 public interface IEventRegistrar {
