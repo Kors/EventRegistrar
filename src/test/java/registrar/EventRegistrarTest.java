@@ -1,7 +1,10 @@
 package registrar;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,15 +13,18 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class EventRegistrarTest {
 
-    IEventRegistrar registrar;
+    private IEventRegistrar registrar;
 
-    @Test
-    void registerEvent_eventRegistered() {
-        registrar.registerEvent();
+    @DisplayName("Registrar return as many events as registered")
+    @ParameterizedTest
+    @ValueSource(ints = {0, 1, 2, 3, 15})
+    void registerEvent_eventRegistered(int eventsCount) {
+        for (int i = 0; i < eventsCount; i++)
+            registrar.registerEvent();
 
-        assertEquals(1, registrar.getLastMinuteEventsCount());
-        assertEquals(1, registrar.getLastHourEventsCount());
-        assertEquals(1, registrar.getLastDayEventsCount());
+        assertEquals(eventsCount, registrar.getLastMinuteEventsCount());
+        assertEquals(eventsCount, registrar.getLastHourEventsCount());
+        assertEquals(eventsCount, registrar.getLastDayEventsCount());
     }
 
     @Test
